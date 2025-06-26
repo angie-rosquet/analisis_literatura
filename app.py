@@ -24,6 +24,8 @@ with st.sidebar:
         index=0
     )
 if categoria == "Página Principla(Storytelling)":
+    
+    # Intro
     st.write("""
         ## Las dos caras del éxito literario: el mercado y el canon  
         Imagina que entras a una librería. A tu izquierda, una pila de ejemplares de El código Da Vinci con un cartel que dice "Más de 100 millones vendidos". A tu derecha, un estante modesto con los Cuentos completos de Clarice Lispector y una medalla que reza "Premio Nobel". Dos mundos, dos formas de entender la literatura.  
@@ -60,22 +62,19 @@ if categoria == "Página Principla(Storytelling)":
         Un bestseller no implica calidad literaria según los criterios académicos. Algunos bestsellers son criticados por tener fórmulas comerciales (por ejemplo, After de Anna Todd), mientras que otros sí tienen mérito literario (como Cien años de soledad).
         Esto nos da los primeros destellos de solapamiento entre el canon literario y los bestsellers.
         """)
+    
+    #DataFrames necesarios
     df_premios = olst.df_all_p
     df_bestsellers = olst.df_all_bs 
-    df_relacion_premio_bestseller = olst.autores_con_bestsellers
-    st.write("""
-            En décadas pasadas, era más común encontrar autores premiados que, además de ser reconocidos por su calidad literaria, lograban colocar algunas de sus obras en la lista de bestsellers. 
-            Esto se debía a que el mercado literario y el ámbito académico compartían ciertos criterios de valor, permitiendo que obras como Cien años de soledad de Gabriel García Márquez alcanzaran tanto el éxito comercial como el reconocimiento crítico. 
-            Sin embargo, es importante destacar que nunca se ha esperado que estos autores acumulen una gran cantidad de bestsellers, ya que su producción literaria suele ser limitada. 
-            Esto se explica por el tiempo que dedican a la investigación, la documentación y la revisión minuciosa de sus obras, procesos que garantizan su calidad pero que, a su vez, reducen su volumen de publicación.    
-            La gráfica adjunta refleja esta realidad: la mayoría de los autores premiados tienen un número bajo de bestsellers, concentrándose en valores entre 0 y 2.5, con muy pocos casos que superen esta cifra. 
-            Esto refuerza la idea de que la excelencia literaria no está necesariamente ligada al éxito comercial masivo.  
-            Con los años, la frecuencia de solapamientos entre bestsellers y premios literarios ha disminuido hasta volverse casi nula. 
-            Esto puede atribuirse a la creciente divergencia entre los criterios del mercado —que prioriza fórmulas comerciales y rapidez— y los de la crítica académica —que valora la innovación, la profundidad y el rigor estilístico—. Mientras que en el pasado algunos autores lograban conciliar ambos aspectos, hoy en día es cada vez más raro que una obra sea simultáneamente un fenómeno de ventas y un referente canónico.  
-            En conclusión, la gráfica no solo confirma la baja media de bestsellers entre los autores premiados, sino que también ilustra cómo se ha ido desdibujando la conexión entre éxito comercial y reconocimiento literario. Este fenómeno invita a reflexionar sobre las dinámicas actuales del mundo editorial, donde la inmediatez y la rentabilidad parecen dominar, en detrimento de obras que, aunque menos visibles, contribuyen de manera significativa al patrimonio cultural.
-             """)
+    df_relacion_premio_bestseller_all = olst.autores_con_bestsellers
+    df_relacion_premio_bestseller_eng = olst.sencillo
+    
+    #explicacion 1
+    st.write("""""")
+    
+    #grafico de apoyo para explicacion 1
     fig1 = px.bar(
-    df_relacion_premio_bestseller,
+    df_relacion_premio_bestseller_eng,
     x='num_bestsellers',
     y='name',
     orientation='h',
@@ -93,10 +92,14 @@ if categoria == "Página Principla(Storytelling)":
                  "Idioma: %{customdata[2]}<extra></extra>"
                  )
     st.plotly_chart(fig1, use_container_width=True)
-    st.subheader("La distribución a lo largo de los años ha estado muy dispersa, no hay un patrón con respecto a los años, pero ¿qué tal con las nacionalidades de los autores?")
-    st.header("Evolución Temporal y Nacionalidades")
+    
+    
+    #explicacion 2
+    st.write()
+    
+    # grafico explicacion 2
     fig2 = px.scatter(
-        df_relacion_premio_bestseller,
+        df_relacion_premio_bestseller_eng,
         x='year',
         y='num_bestsellers',
         size='num_bestsellers',
@@ -107,22 +110,17 @@ if categoria == "Página Principla(Storytelling)":
         size_max=30,
         height=500
         )
-    st.write("""
-             Podremos observar una tendencia entre los premiados de habla inglesa y castellana a tener una mayor recurrencia en los listados de los bestsellers,
-             lo cual se debe, mayormente, por la gran influencia que tienen estos idiomas en el mercado editorial.
-             """)
     fig2.update_traces(
         hovertemplate="<b>%{hovertext}</b><br>" +
         "Año: %{x}<br>" +
         "Bestsellers: %{y}<br>" +
         "Nacionalidad: %{customdata[0]}<extra></extra>"
         )
-
     st.plotly_chart(fig2, use_container_width=True)
 
     st.header("Datos Completos")
     st.dataframe(
-        df_relacion_premio_bestseller[['name', 'year', 'nationality', 'language', 'num_bestsellers']],
+        df_relacion_premio_bestseller_all[['name', 'year', 'nationality', 'language', 'num_bestsellers']],
         column_config={
             "name": "Autor",
             "year": "Año Premio",
@@ -136,7 +134,7 @@ if categoria == "Página Principla(Storytelling)":
     st.write("""
              A pesar que el idioma que se ve mas distribuido entre años es el inglés hay una mayor concentración en español
              """)
-    idiomas_counts = df_relacion_premio_bestseller['language'].value_counts()
+    idiomas_counts = df_relacion_premio_bestseller_all['language'].value_counts()
     umbral = 3 
     idiomas_principales = idiomas_counts[idiomas_counts >= umbral]
     otros = idiomas_counts[idiomas_counts < umbral].sum()
@@ -151,14 +149,53 @@ if categoria == "Página Principla(Storytelling)":
         autopct='%1.1f%%',
         startangle=90,
         colors=plt.cm.Paired.colors,
-        wedgeprops={'edgecolor': 'white', 'linewidth': 1}  # Bordes blancos
+        wedgeprops={'edgecolor': 'white', 'linewidth': 1}
     )
+    st.write("Existe una gran recurrencia entre autores premiados con Bestseller en español, esto significa que los autores en habla castellana son mejor premiados o mas vendidos, o tal vez logren encontrar la fórmula para ganar audiencia y a la vez innovar y tener un valor cultural significativo?")
 
     plt.title("Distribución de Idiomas entre Autores Premiados y Bestsellers", fontsize=14)
+    st.write("Aunque en ingles hay mucha presencia el español revasa con creces a los demas idiomas")
     plt.axis('equal')
     plt.tight_layout()
     st.pyplot()
     
+    
+    
+    
+    
+    
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
     
 elif categoria == "Bestsellers New York Times":

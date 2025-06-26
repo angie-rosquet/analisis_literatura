@@ -50,8 +50,8 @@ def normalize_df_bs(df):
             df[col] = None
     return df
 
-# funcion para mezclar los dataframe
-def mix_df(amazon_df, nyt_df, casalibro_df):
+# funcion para mezclar los dataframe 3
+def mix_df_3(amazon_df, nyt_df, casalibro_df):
     bestsellers_unidos = pd.concat(
         [amazon_df, nyt_df, casalibro_df],
         ignore_index=True
@@ -60,11 +60,29 @@ def mix_df(amazon_df, nyt_df, casalibro_df):
     bestsellers_unidos = bestsellers_unidos.sort_values('año', ascending=False)
     return bestsellers_unidos
 
-df_all_bs = mix_df(normalize_df_bs(df_amazon), normalize_df_bs(df_nyt), normalize_df_bs(df_casalibro))
+df_all_bs = mix_df_3(normalize_df_bs(df_amazon), normalize_df_bs(df_nyt), normalize_df_bs(df_casalibro))
 df_all_p = pd.concat(
     [df_nobel, df_cervantes],
     ignore_index= True
     )
+
+# funcion para mezclar los dataframe 2
+def mix_df_2(amazon_df, nyt_df):
+    bestsellers_unidos = pd.concat(
+        [amazon_df, nyt_df],
+        ignore_index=True
+        )
+    # Ordenar por año descendente
+    bestsellers_unidos = bestsellers_unidos.sort_values('año', ascending=False)
+    return bestsellers_unidos
+
+df_all_bs = mix_df_3(normalize_df_bs(df_amazon), normalize_df_bs(df_nyt), normalize_df_bs(df_casalibro))
+df_all_p = pd.concat(
+    [df_nobel, df_cervantes],
+    ignore_index= True
+    )
+
+df_bs_eng = mix_df_2(normalize_df_bs(df_amazon), normalize_df_bs(df_nyt))
 
 def procesar_autores_premiados(bestsellers_df, premios_df):
     premios_df['autor_normalizado'] = premios_df['name'].str.lower().str.strip()
@@ -79,3 +97,5 @@ def procesar_autores_premiados(bestsellers_df, premios_df):
     return autores_premiados
 
 autores_con_bestsellers = procesar_autores_premiados(df_all_bs, df_all_p)
+
+sencillo = procesar_autores_premiados(df_bs_eng, df_nobel)

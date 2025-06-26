@@ -17,8 +17,8 @@ st.sidebar.title("Navegación en la app")
 
 # Agregos al sidebar
 st.sidebar.markdown("Síguenos en Instagram: ")
-st.sidebar.markdown("@narrativa_en_datos")
+st.sidebar.markdown("[@narrativa_en_datos](https://www.instagram.com/narrativa_en_datos/)")
     
 # Imagen decorativa
-imagen_1 = Image.open("Communication Data Product/image 01.jpg")
+imagen_1 = Image.open("imagenes/1.png")
 st.image(imagen_1)
