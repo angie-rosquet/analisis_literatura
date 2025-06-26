@@ -1,17 +1,14 @@
-                                            # Bibliotecas que necesitamos 
-
+#____________________________________________Bibliotecas que necesitamos_________________________________________________________________________________________________________________________________________________________________# 
 import streamlit as st
 from pathlib import Path
 import json
 import os 
-import pandas as pd
 import plotly.express as px
-import matplotlib.pyplot as plt
 from PIL import Image
 #propia
 import bibliotecas.own_library_st as olst
 
-                                                #DataFrames necesarios y variables
+#_______________________________________________DataFrames necesarios y variables_______________________________________________________________________________________________________________________________________________________#
 # dataframe premios unidos cervantes y nobel
 df_premios = olst.df_all_p
 
@@ -35,7 +32,7 @@ DATA_DIR = BASE_DIR / "data"
 
 #esta es la ruta del archivo de la foto que va a ser el icono del storytelling
 icon_path = BASE_DIR / "icon.png"
-
+##################################################################################################################################################
 
 # confihuracion preedetermianda de la pagina
 st.set_page_config(
@@ -49,10 +46,11 @@ with st.sidebar:
     st.title("📚 Menú")
     categoria = st.radio(
         "Aquí se encuentran las opciones para navegar en nuestro sitio:",
-        options=["Página Principal de Presentación", "Storytelling: Canon vs Mercado", "Data Frame Bestsellers New York Times", "Data Frame Bestsellers Amazon", "Data Frame Bestsellers Casa del Título(2018-2024)", "Data Frame Premios Nobel", "Data Frame Premios Cervantes", "Acerca de"],
+        options=["Página Principal de Presentación", "Storytelling: Canon vs Mercado", "Data Product","Data Frame Bestsellers New York Times", "Data Frame Bestsellers Amazon", "Data Frame Bestsellers Casa del Título(2018-2024)", "Data Frame Premios Nobel", "Data Frame Premios Cervantes", "Acerca de"],
         index=0
     )
-
+    
+#_____________________________________________________Presentacion______________________________________________________________________________________________________________________________________#
 if categoria == "Página Principal de Presentación":
     st.title("Proyecto Narrativa en Datos")
 
@@ -74,10 +72,9 @@ if categoria == "Página Principal de Presentación":
     # Imagen decorativa
     imagen_1 = Image.open("imagenes/1.png")
     st.image(imagen_1)
-    
-    
+#___________________________________________________Storytelling__________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________#  
 if categoria == "Storytelling: Canon vs Mercado":
-    # Intro
+                                                            #Intro
     st.write("""
         ## Las dos caras del éxito literario: el mercado y el canon  
         Imagina que entras a una librería. A tu izquierda, una pila de ejemplares de El código Da Vinci con un cartel que dice "Más de 100 millones vendidos". A tu derecha, un estante modesto con los Cuentos completos de Clarice Lispector y una medalla que reza "Premio Nobel". Dos mundos, dos formas de entender la literatura.  
@@ -115,7 +112,7 @@ if categoria == "Storytelling: Canon vs Mercado":
         Esto nos da los primeros destellos de solapamiento entre el canon literario y los bestsellers.
         """)
     
-                                                    # La historia     
+                                                        #La historia     
     
     #explicacion 1
     st.write("""
@@ -149,8 +146,9 @@ if categoria == "Storytelling: Canon vs Mercado":
                  )
     st.plotly_chart(fig1, use_container_width=True)
     st.markdown(f"En los últimos 30 años un **{porciento}%** de los autores premiados han tenido al menos un bestseller, es decir que un poco más de la mitad")
+    st.markdown("")
     
-    
+    #grafico de la biblioteca que muetsra la cantidad de bestsellers que tienen cada autor despues de ganar su bestseller
     olst.many_best_after_nobel(olst.df_bs_eng, olst.df_nobel)
     
     
@@ -207,15 +205,99 @@ if categoria == "Storytelling: Canon vs Mercado":
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#____________________________________________________Data Product________________________________________________________________________________________________________________________________________________________________________________________#       
+elif categoria == "Data Product":
+    st.title("Data Product")        
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        
+   
+#______________________________________________________________Data Frames_____________________________________________________________________________________________________________________________________________________________#    
 elif categoria == "Data Frame Bestsellers New York Times":
     st.title("Recopilación de los Bestsellers en el New York Time de 1994 a 2024")
     olst.df_nyt
@@ -235,6 +317,7 @@ elif categoria == "Data Frame Premios Nobel":
 elif categoria == "Data Frame Premios Cervantes":
     st.title("Recopilación de los Premios Cervantes de 1994 a 2024")
     olst.df_cervantes
+#_____________________________________________________Acerca de_________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________#
 elif categoria == "Acerca de":
     st.subheader("Este proyecto está desarrollado por estudiantes de Ciencia de Datos en la Universidad de La Habana con el objetivo de demostrar las capacidades del uso de las matemáticas y estadistica en la explicación de fenómenos, facilitar el acceso a las obras literarias y extraer información respecto a las tendencias literarias actuales.")
     st.markdown("Para cualquier queja o sugerencia contáctanos en https://www.instagram.com/narrativa_en_datos?igsh=b3EzcWtqN3Nnbmhn")
