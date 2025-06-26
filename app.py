@@ -1,30 +1,82 @@
+                                            # Bibliotecas que necesitamos 
+
 import streamlit as st
 from pathlib import Path
-import bibliotecas.own_library_st as olst
 import json
 import os 
 import pandas as pd
 import plotly.express as px
 import matplotlib.pyplot as plt
+from PIL import Image
+#propia
+import bibliotecas.own_library_st as olst
 
+                                                #DataFrames necesarios y variables
+# dataframe premios unidos cervantes y nobel
+df_premios = olst.df_all_p
+
+#dataframe bestsellers todos, casa del libro, amazon, nyt
+df_bestsellers = olst.df_all_bs 
+
+#dataframe de la relacion de los premiados(todos) con los bestsellers
+df_relacion_premio_bestseller_all = olst.autores_con_bestsellers
+
+# dataframe de lo mismo de arriba pero exceptuando la casa del libro y vervantes que es solamente para habla hispana 
+df_relacion_premio_bestseller_eng = olst.sencillo
+
+# porciento de los autores con premio nobel que tienen al menos un bestseller
+porciento = olst.average_bestseller_premio(df_relacion_premio_bestseller_eng)    
+
+# para tener la ruta de donde se ejecuta este archivo
 BASE_DIR = Path(__file__).parent
+
+# como los datos estan en esta ruta pero dentro de la carpeta data me creo esta variable
 DATA_DIR = BASE_DIR / "data"
+
+#esta es la ruta del archivo de la foto que va a ser el icono del storytelling
 icon_path = BASE_DIR / "icon.png"
 
+
+# confihuracion preedetermianda de la pagina
 st.set_page_config(
-    page_title="Storytelling Literario de Narrativa en Datos",
+    page_title="Narrativa en Datos",
     page_icon= str(icon_path) if icon_path.exists() else "📚",
     layout="wide"
     )
+
+# creacion menu del costado
 with st.sidebar:
     st.title("📚 Menú")
     categoria = st.radio(
-        "Aquí puedes ver los datos con los que se trabajan:",
-        options=["Página Principla(Storytelling)", "Bestsellers New York Times", "Bestsellers Amazon", "Bestsellers Casa del Título(2018-2024)", "Premios Nobel", "Premios Cervantes"],
+        "Aquí se encuentran las opciones para navegar en nuestro sitio:",
+        options=["Página Principal de Presentación", "Storytelling: Canon vs Mercado", "Data Frame Bestsellers New York Times", "Data Frame Bestsellers Amazon", "Data Frame Bestsellers Casa del Título(2018-2024)", "Data Frame Premios Nobel", "Data Frame Premios Cervantes", "Acerca de"],
         index=0
     )
-if categoria == "Página Principla(Storytelling)":
+
+if categoria == "Página Principal de Presentación":
+    st.title("Proyecto Narrativa en Datos")
+
+    # Vizualización introductoria
+    st.subheader("Tenemos todo un listado de curiosidades analíticas para indagar. Si te apasiona la lectura y como esta se desenvuelve en el mundo actual, esto te interesa.")
+    st.markdown("Esta app une el poder de la **Ciencia de Datos** con la pasión por la **literatura**.")
+    st.markdown("Aquí podrás:")
+    st.markdown(" ► Explorar una colección de libros ordenada por autores y títulos.")
+    st.markdown(" ► Buscar, filtrar y descargar obras literarias.")
+    st.markdown(" ► Observar gráficos interactivos que revelan información sobre la literatura actual. Navega ya en nuestro Dataproduct!")
+    st.markdown(" ► Disfrutar de una historia acerca de la literatura utilizando Ciencia de Datos(Se encuentra en la Sección del Storytelling).")
+    st.markdown(" ► Si le interesa seguir curoseando puede acceder a nuestro video de Youtube donde también hablamos acerca de literatura con datos(al final de esta página).")
+    # Crear el sidebar
+    st.sidebar.title("Navegación en la app")
+    # Agregos al sidebar
+    st.sidebar.markdown("Síguenos en Instagram: ")
+    st.sidebar.markdown("[@narrativa_en_datos](https://www.instagram.com/narrativa_en_datos/)")
+    st.sidebar.markdown("[nuestro canal en Youtube siguelo para estar atento al video](https://www.youtube.com/datarraset/)")
+    # Imagen decorativa
+    imagen_1 = Image.open("imagenes/1.png")
+    st.image(imagen_1)
     
+    
+if categoria == "Storytelling: Canon vs Mercado":
     # Intro
     st.write("""
         ## Las dos caras del éxito literario: el mercado y el canon  
@@ -49,7 +101,7 @@ if categoria == "Página Principla(Storytelling)":
         - Reconocimiento académico  
         **Pero... ¿y si es falso? ¿existe una relación entre estos autores y/o obras que se “contraponen”?**  
              
-        Primeramente, debemos entender que es un bestseller (en inglés, literalmente "mejor vendido") es un término usado en la industria editorial para referirse a Títulos que han vendido una gran cantidad de ejemplares en poco tiempo.  
+        Primeramente, debemos entender que es un bestseller (en inglés, literalmente "mejor vendido") es un término usado en la industria editorial para referirse a Títulos que han vendido una gran cantidad de ejemplares en poco tiempo. Si desea conocer mas acerca de los bestsellers puedes visitar nuestro video en youtube(el link se encuentra en el menú) 
         Mientras que canon literario se refiere a una selección de textos que, por su valor estético, histórico, filosófico o lingüístico, son considerados fundamentales dentro de una literatura nacional o universal. Lo que define que una obra o autor es un canon literario son los siguientes aspectos:  
         1.	Calidad literaria (innovación en el lenguaje, profundidad temática, estilo).  
         2.	Influencia en otras obras, autores y movimientos.  
@@ -63,15 +115,19 @@ if categoria == "Página Principla(Storytelling)":
         Esto nos da los primeros destellos de solapamiento entre el canon literario y los bestsellers.
         """)
     
-    #DataFrames necesarios
-    df_premios = olst.df_all_p
-    df_bestsellers = olst.df_all_bs 
-    df_relacion_premio_bestseller_all = olst.autores_con_bestsellers
-    df_relacion_premio_bestseller_eng = olst.sencillo
+                                                    # La historia     
     
     #explicacion 1
-    st.write("""""")
-    
+    st.write("""
+             Cuando uno piensa en el Premio Nobel de Literatura, imagina solemnidad: discursos densos, novelas introspectivas, y autores que difícilmente aparecen en la mesa de novedades del supermercado.  
+             Pero… esta gráfica nos invita a cuestionar ese prejuicio.  
+             Aquí se representan los autores ganadores del Nobel desde 1994 hasta 2024 y cuántos bestsellers han logrado, según los datos recopilados. La gama de colores refleja desde quienes nunca han figurado entre los más vendidos (morado oscuro), hasta quienes lo han logrado cuatro veces (amarillo brillante).  
+             Y la sorpresa es clara:  
+             🟡 Louise Glück, Kazuo Ishiguro, Mario Vargas Llosa, Elfriede Jelinek y J.M. Coetzee son ejemplos de escritores que, además de haber sido reconocidos por su maestría literaria, han logrado capturar el gusto del público general, con hasta 4 títulos bestseller cada uno.  
+             🟢 Autores como Alice Munro, Orhan Pamuk, Doris Lessing también muestran una notable presencia comercial con 2 o 3 bestsellers.  
+             🔵 Pero también están los Nobel que permanecen fuera del radar popular. Bob Dylan, Olga Tokarczuk, Svetlana Alexievich, entre otros, tienen una fuerte presencia crítica pero cero presencia en listas de ventas recientes.
+             """)
+
     #grafico de apoyo para explicacion 1
     fig1 = px.bar(
     df_relacion_premio_bestseller_eng,
@@ -92,6 +148,10 @@ if categoria == "Página Principla(Storytelling)":
                  "Idioma: %{customdata[2]}<extra></extra>"
                  )
     st.plotly_chart(fig1, use_container_width=True)
+    st.markdown(f"En los últimos 30 años un **{porciento}%** de los autores premiados han tenido al menos un bestseller, es decir que un poco más de la mitad")
+    
+    
+    olst.many_best_after_nobel(olst.df_bs_eng, olst.df_nobel)
     
     
     #explicacion 2
@@ -118,48 +178,6 @@ if categoria == "Página Principla(Storytelling)":
         )
     st.plotly_chart(fig2, use_container_width=True)
 
-    st.header("Datos Completos")
-    st.dataframe(
-        df_relacion_premio_bestseller_all[['name', 'year', 'nationality', 'language', 'num_bestsellers']],
-        column_config={
-            "name": "Autor",
-            "year": "Año Premio",
-            "nationality": "Nacionalidad",
-            "language": "Idioma",
-            "num_bestsellers": "Bestsellers"
-        },
-        hide_index=True,
-        use_container_width=True
-    )
-    st.write("""
-             A pesar que el idioma que se ve mas distribuido entre años es el inglés hay una mayor concentración en español
-             """)
-    idiomas_counts = df_relacion_premio_bestseller_all['language'].value_counts()
-    umbral = 3 
-    idiomas_principales = idiomas_counts[idiomas_counts >= umbral]
-    otros = idiomas_counts[idiomas_counts < umbral].sum()
-    if otros > 0:
-        idiomas_final = pd.concat([idiomas_principales, pd.Series({'Otros': otros})])
-    else:
-        idiomas_final = idiomas_principales
-    plt.figure(figsize=(10, 8))
-    plt.pie(
-        idiomas_final,
-        labels=idiomas_final.index,
-        autopct='%1.1f%%',
-        startangle=90,
-        colors=plt.cm.Paired.colors,
-        wedgeprops={'edgecolor': 'white', 'linewidth': 1}
-    )
-    st.write("Existe una gran recurrencia entre autores premiados con Bestseller en español, esto significa que los autores en habla castellana son mejor premiados o mas vendidos, o tal vez logren encontrar la fórmula para ganar audiencia y a la vez innovar y tener un valor cultural significativo?")
-
-    plt.title("Distribución de Idiomas entre Autores Premiados y Bestsellers", fontsize=14)
-    st.write("Aunque en ingles hay mucha presencia el español revasa con creces a los demas idiomas")
-    plt.axis('equal')
-    plt.tight_layout()
-    st.pyplot()
-    
-    
     
     
     
@@ -198,22 +216,25 @@ if categoria == "Página Principla(Storytelling)":
         
         
     
-elif categoria == "Bestsellers New York Times":
+elif categoria == "Data Frame Bestsellers New York Times":
     st.title("Recopilación de los Bestsellers en el New York Time de 1994 a 2024")
     olst.df_nyt
 
-elif categoria == "Bestsellers Amazon":
+elif categoria == "Data Frame Bestsellers Amazon":
     st.title("Recopilación de los Bestsellers en Amazon 1995 a 2024")
     olst.df_amazon
     
-elif categoria == "Bestsellers Casa del Título(2018-2024)":
+elif categoria == "Data Frame Bestsellers Casa del Título(2018-2024)":
     st.title("Recopilación de los Bestsellers en Casa del Título de 1994 a 2024")
     olst.df_casalibro
     
-elif categoria == "Premios Nobel":
+elif categoria == "Data Frame Premios Nobel":
     st.title("Recopilación de los Premios Nobel de 1994 a 2024")
     olst.df_nobel
     
-elif categoria == "Premios Cervantes":
+elif categoria == "Data Frame Premios Cervantes":
     st.title("Recopilación de los Premios Cervantes de 1994 a 2024")
     olst.df_cervantes
+elif categoria == "Acerca de":
+    st.subheader("Este proyecto está desarrollado por estudiantes de Ciencia de Datos en la Universidad de La Habana con el objetivo de demostrar las capacidades del uso de las matemáticas y estadistica en la explicación de fenómenos, facilitar el acceso a las obras literarias y extraer información respecto a las tendencias literarias actuales.")
+    st.markdown("Para cualquier queja o sugerencia contáctanos en https://www.instagram.com/narrativa_en_datos?igsh=b3EzcWtqN3Nnbmhn")

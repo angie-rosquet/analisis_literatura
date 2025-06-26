@@ -85,8 +85,6 @@ df_all_p = pd.concat(
 df_bs_eng = mix_df_2(normalize_df_bs(df_amazon), normalize_df_bs(df_nyt))
 
 def procesar_autores_premiados(bestsellers_df, premios_df):
-    premios_df['autor_normalizado'] = premios_df['name'].str.lower().str.strip()
-    bestsellers_df['autor_normalizado'] = bestsellers_df['Autor'].str.lower().str.strip()
     conteo_bestsellers = bestsellers_df['autor_normalizado'].value_counts().reset_index()
     conteo_bestsellers.columns = ['autor_normalizado', 'num_bestsellers']
     autores_premiados = premios_df.merge(
@@ -99,3 +97,33 @@ def procesar_autores_premiados(bestsellers_df, premios_df):
 autores_con_bestsellers = procesar_autores_premiados(df_all_bs, df_all_p)
 
 sencillo = procesar_autores_premiados(df_bs_eng, df_nobel)
+
+# funcion por ciento de ganadores de bestsellers en ganadores nobel
+def average_bestseller_premio(dataframe):
+    total_autor = len(dataframe)
+    con_bestseller = dataframe[dataframe["num_bestsellers"] > 0].shape[0]
+    if total_autor == 0:
+        return 0.0
+    porcentaje = (con_bestseller / total_autor) * 100
+    return round(porcentaje, 2)
+
+# funcion para ver los autores cuantos bestsellers tienen despues de su premio nobel
+def many_best_after_nobel(df_bestsellers, df_nobel):
+    df_bestsellers["autor_normalizado"] = df_bestsellers["name"].str.lower().str.strip()
+    df_nobel["autor_normalizado"] = df_nobel["autor_normalizado"].str.lower().str.strip()
+    df_merge = pd.merge(df_bestsellers, df_nobel, on="autor_normalizado", suffixes=("_bestseller", "_nobel"))
+    df_post_nobel = df_merge[df_merge["Año"] > df_merge["year"]]
+    conteo = df_post_nobel["Autor"].value_counts().reset_index()
+    conteo.columns = ["Autor", "Cantidad"]
+    fig = px.bar(
+        conteo,
+        x="Cantidad",
+        y="Autor",
+        orientation="h",
+        title="Autores con Bestsellers Publicados Después de Ganar el Premio Nobel",
+        labels={"Cantidad": "Número de Bestsellers", "Autor": "Autor"},
+        color="Cantidad",
+        color_continuous_scale="plasma"
+    )
+    fig.update_layout(yaxis=dict(autorange="reversed"))  # Invertir eje Y para mejor lectura
+    fig.show()
