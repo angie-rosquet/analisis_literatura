@@ -32,16 +32,18 @@ DATA_DIR = BASE_DIR / "data"
 
 #esta es la ruta del archivo de la foto que va a ser el icono del storytelling
 icon_path = BASE_DIR / "icon.png"
-##################################################################################################################################################
 
-# confihuracion preedetermianda de la pagina
+
+#____________________________________________PAGINA______________________________________________________________________________________________________________________________________________________________________________________________#
+
+# CONFIGURACION DE LA PAGINA
 st.set_page_config(
     page_title="Narrativa en Datos",
     page_icon= str(icon_path) if icon_path.exists() else "📚",
     layout="wide"
     )
 
-# creacion menu del costado
+#creacion menu del costado
 with st.sidebar:
     st.title("📚 Menú")
     categoria = st.radio(
