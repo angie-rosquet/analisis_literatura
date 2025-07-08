@@ -694,7 +694,7 @@
     },
     {
         "Título": "Harry Potter and the Chamber of Secrets",
-        "Autor": "J. K. Rowling",
+        "Autor": "J.K. Rowling",
         "Género": "Ficción",
         "sinopsis": "No disponible",
         "Año": 1999
@@ -708,7 +708,7 @@
     },
     {
         "Título": "Harry Potter and the Philosopher's Stone",
-        "Autor": "J. K. Rowling",
+        "Autor": "J.K. Rowling",
         "Género": "Ficción",
         "sinopsis": "No disponible",
         "Año": 1999
@@ -729,7 +729,7 @@
     },
     {
         "Título": "Harry Potter and the Prisoner of Azkaban",
-        "Autor": "J. K. Rowling",
+        "Autor": "J.K. Rowling",
         "Género": "Ficción",
         "sinopsis": "No disponible",
         "Año": 1999
@@ -9814,7 +9814,7 @@
   },
   {
     "Título": "Harry Potter and the Half-Blood Prince",
-    "Autor": "J. K. Rowling",
+    "Autor": "J.K. Rowling",
     "Género": "fiction",
     "sinopsis": "In this sixth volume of the epic series, the Dark Lord, Voldemort, is wreaking havoc throughout England and Harry, now 16, is more isolated than ever.",
     "Año": 2005

@@ -35,11 +35,13 @@ def normalize_df_bs(df):
     mapeo = {
         'titulo': 'titulo',
         'title': 'titulo',
+        'Título': 'titulo',
         'nombre': 'titulo',
         'autor': 'autor',
         'author': 'autor',
         'escritor': 'autor',
         'name' : 'autor',
+        'Autor': 'autor',
         'año': 'año',
         'year': 'año',
         'anio': 'año',
@@ -51,14 +53,16 @@ def normalize_df_bs(df):
     for col in ['titulo', 'autor', 'año']:
         if col not in df.columns:
             df[col] = None
+    for col in ['titulo', 'autor']:
+        df[col] = df[col].astype(str).str.lower().str.strip()
     return df
 
 #DataFrame Normalizado
-df_amazon_n = normalize_df_bs(df_amazon)
-df_casalibro_n = normalize_df_bs(df_casalibro)
-df_nobel_n = normalize_df_bs(df_nobel)
-df_nyt_n = normalize_df_bs(df_nyt)
-df_cervantes_n = normalize_df_bs(df_cervantes)
+df_amazon = normalize_df_bs(df_amazon)
+df_casalibro = normalize_df_bs(df_casalibro)
+df_nobel = normalize_df_bs(df_nobel)
+df_nyt = normalize_df_bs(df_nyt)
+df_cervantes = normalize_df_bs(df_cervantes)
 
 #_________________________________________________________funcion para mezclar los dataframe(2 o 3)________________________________________________________________#
 
@@ -79,56 +83,72 @@ def mix_df_2(amazon_df, nyt_df):
     bestsellers_unidos = bestsellers_unidos.sort_values('año', ascending=False)
     return bestsellers_unidos
 
-df_all_bs = mix_df_3(df_amazon_n, df_nyt_n, df_casalibro_n)
-df_eng_bs = mix_df_2(df_amazon_n, df_nyt_n)
-df_all_p = mix_df_2(df_nobel_n, df_cervantes_n)
+df_all_bs = mix_df_3(df_amazon, df_nyt, df_casalibro)
+df_eng_bs = mix_df_2(df_amazon, df_nyt)
+df_all_p = mix_df_2(df_nobel, df_cervantes)
 
-#________________________________________funcion para hallar la cantidad de libros bestsellers que tiene un ganador de premio________________________________________________________#
-def procesar_autores_premiados(bestsellers_df, premios_df):
-    conteo_bestsellers = bestsellers_df['Autor'].value_counts().reset_index()
-    conteo_bestsellers.columns = ['autor_normalizado', 'num_bestsellers']
-    autores_premiados = premios_df.merge(
-        conteo_bestsellers,
-        on='autor_normalizado',
+
+#______________________________________funcion para ver cuantos bestsellers tiene cada autor________________________________________________________#
+def new_df_number_bs(df_bs):
+    conteo_bestsellers = (
+        df_bs['autor']
+        .value_counts()
+        .reset_index()
+        .rename(columns={'index': 'autor', 'autor': 'autor'})
+    )
+    return conteo_bestsellers
+
+#DataFrame de los autores con su cantidad de bestsellers
+count_all = new_df_number_bs(df_all_bs)
+
+count_eng = new_df_number_bs(df_eng_bs)
+
+#___________________________________________funcion para mezclar los dataframe__________________________________________________________________________________________________________________________________#
+
+def mix_df(df_all_p, count_all):
+    df_merged = df_all_p.merge(
+        count_all.rename(columns={'autor': 'autor', 'count': 'count'}),
+        on='autor',
         how='left'
-    ).fillna({'num_bestsellers': 0})
-    return autores_premiados
+    )
+    df_merged['count'] = df_merged['count'].fillna(0).astype(int)
+    return df_merged
 
-#dataframe con columna que dice la cantidad de bestsellers que tienen todos los premiados
-autores_con_bestsellers = procesar_autores_premiados(df_all_bs, df_all_p)
-#dataframe con columna que dice la cantidad de bestsellers que tienen todos los premiados nobel
-sencillo = procesar_autores_premiados(df_eng_bs, df_nobel)
+#DataFrame de los premiados con su cantidad de bestsellers
+
+relacion_premio_bs_all = mix_df(df_all_p, count_all)
+
+relacion_premio_bs = mix_df(df_nobel, count_eng)
 
 #______________________________________funcion por ciento de ganadores de bestsellers en ganadores nobel_______________________________________________________________________________________#
-def average_bestseller_premio(dataframe):
-    total_autor = len(dataframe)
-    con_bestseller = dataframe[dataframe["num_bestsellers"] > 0].shape[0]
-    if total_autor == 0:
-        return 0.0
-    porcentaje = (con_bestseller / total_autor) * 100
+
+def average_premios_bs(df_premios):
+    total = len(df_premios)
+    autores_con_bs = df_premios[df_premios['count'] > 0].shape[0]
+    
+    porcentaje = (autores_con_bs / total) * 100
     return round(porcentaje, 2)
+
+v1 = average_premios_bs(relacion_premio_bs_all)
+
+v2 = average_premios_bs(relacion_premio_bs)
+
+
+
+#__________________________________________________________funcion para filtar el data frame de las relaciones por lo que tienen bestsellers_______________________________________________________________________________________________________________________________________________________#
+
+def filtter_bs(df):
+    return df[df['count'] > 0].copy()
+
+relacion_filtrada = filtter_bs(relacion_premio_bs)
+
+
+
+
+
 
 
 #_____________________________________funcion para ver los autores cuantos bestsellers tienen despues de su premio nobel_______________________________________________________________________________________#
-def many_best_after_nobel(df_bestsellers, df_nobel):
-    df_bestsellers["autor_normalizado"] = df_bestsellers["name"].str.lower().str.strip()
-    df_nobel["autor_normalizado"] = df_nobel["autor_normalizado"].str.lower().str.strip()
-    df_merge = pd.merge(df_bestsellers, df_nobel, on="autor_normalizado", suffixes=("_bestseller", "_nobel"))
-    df_post_nobel = df_merge[df_merge["Año"] > df_merge["year"]]
-    conteo = df_post_nobel["Autor"].value_counts().reset_index()
-    conteo.columns = ["Autor", "Cantidad"]
-    fig = px.bar(
-        conteo,
-        x="Cantidad",
-        y="Autor",
-        orientation="h",
-        title="Autores con Bestsellers Publicados Después de Ganar el Premio Nobel",
-        labels={"Cantidad": "Número de Bestsellers", "Autor": "Autor"},
-        color="Cantidad",
-        color_continuous_scale="plasma"
-    )
-    fig.update_layout(yaxis=dict(autorange="reversed"))  # Invertir eje Y para mejor lectura
-    fig.show()
 
 
 
