@@ -317,18 +317,18 @@ def counter_books(df_bestsellers):
 def before_and_after(filtter_jusy_nonel_with_bs, df_bestsellers):
     autores_nobel = filtter_jusy_nonel_with_bs['autor'].unique()
     
-    # 2. Widget de selección con search
+    # Widget de selección con search
     autor_seleccionado = st.selectbox(
         "Selecciona un autor Nobel:",
         options=sorted(autores_nobel),
         format_func=lambda x: f"{x} ({filtter_jusy_nonel_with_bs[filtter_jusy_nonel_with_bs['autor']==x]['año'].values[0]})"
     )
     
-    # 3. Datos del autor seleccionado
+    # Datos del autor seleccionado
     datos_autor = filtter_jusy_nonel_with_bs[filtter_jusy_nonel_with_bs['autor'] == autor_seleccionado].iloc[0]
     año_nobel = datos_autor['año']
     
-    # 4. Mostrar imagen del autor
+    # Mostrar imagen del autor
     ruta_imagen = None
     # Buscar imagen en diferentes formatos
     for ext in ['.jpg', '.jpeg', '.png']:
@@ -348,19 +348,18 @@ def before_and_after(filtter_jusy_nonel_with_bs, df_bestsellers):
         st.write(f"## {autor_seleccionado} (Premio Nobel {año_nobel})")
         st.warning("No se encontró imagen del autor")
     
-    # 5. Filtrar bestsellers del autor (insensible a mayúsculas/minúsculas)
+    # Filtrar bestsellers del autor (insensible a mayúsculas/minúsculas)
     libros_autor = df_bestsellers[
         (df_bestsellers['autor'].str.lower() == autor_seleccionado.lower())
     ].sort_values('año')
     
-    # 6. Gráfico de evolución
+    # Gráfico de evolución
     if not libros_autor.empty:
-        # Procesar datos
         evolucion = libros_autor['año'].value_counts().reset_index()
         evolucion.columns = ['año', 'cantidad']
         evolucion = evolucion.sort_values('año')
         
-        # Crear figura
+    
         fig = px.area(
             evolucion,
             x='año',
@@ -371,7 +370,6 @@ def before_and_after(filtter_jusy_nonel_with_bs, df_bestsellers):
             line_shape='spline'
         )
         
-        # Línea del Nobel
         fig.add_vline(
             x=año_nobel,
             line_dash="dash",
@@ -379,8 +377,7 @@ def before_and_after(filtter_jusy_nonel_with_bs, df_bestsellers):
             annotation_text=f"Nobel {año_nobel}",
             annotation_position="top right"
         )
-        
-        # Área de análisis (5 años antes/después)
+    
         fig.add_vrect(
             x0=año_nobel-5,
             x1=año_nobel+5,
@@ -392,7 +389,7 @@ def before_and_after(filtter_jusy_nonel_with_bs, df_bestsellers):
         
         st.plotly_chart(fig, use_container_width=True)
         
-        # 7. Métricas clave
+        # metrics
         col1, col2, col3 = st.columns(3)
         antes = libros_autor[libros_autor['año'] < año_nobel]
         despues = libros_autor[libros_autor['año'] >= año_nobel]
@@ -405,7 +402,7 @@ def before_and_after(filtter_jusy_nonel_with_bs, df_bestsellers):
             cambio = len(despues) - len(antes)
             st.metric("Después del Nobel", len(despues), delta=f"{'+' if cambio>=0 else ''}{cambio}")
         
-        # 8. Tabla de libros expandible
+        # Tabla de libros expandible
         with st.expander(f"📚 Ver todos los bestsellers de {autor_seleccionado}"):
             columnas_disponibles = ['Título', 'titulo', 'title', 'año', 'year', 'Género']
             columnas_a_mostrar = [col for col in columnas_disponibles if col in libros_autor.columns]
