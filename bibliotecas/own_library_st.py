@@ -424,8 +424,6 @@ def before_and_after(filtter_jusy_nonel_with_bs, df_bestsellers):
 #____________________________________________funcion para ver si el idioma esta presente en estas relaciones_______________________________________________#
 
 def mapa_calor_nobel(df_nobel):
-    # Preprocesamiento de datos
-    # Limpiar nacionalidades compuestas (ej: "Germany (born in Free City of Danzig)")
     df_nobel['pais_clean'] = df_nobel['nationality'].str.split('(').str[0].str.strip()
     
     # Correcciones manuales para coincidencia con pycountry
@@ -438,7 +436,6 @@ def mapa_calor_nobel(df_nobel):
         'Congo': 'Congo, Republic of the'
     }
     df_nobel['pais_clean'] = df_nobel['pais_clean'].replace(replacements)
-    
     
     # Contar premios por país
     conteo_paises = df_nobel['pais_clean'].value_counts().reset_index()
@@ -466,8 +463,3 @@ def mapa_calor_nobel(df_nobel):
     fig.update_layout(margin={"r":0,"t":40,"l":0,"b":0})
     
     st.plotly_chart(fig)
-
-
-
-
-#______________________________________funcion para ver si los premios en castellano estan tan alejados como los premios nobel de los bessellers_________________________________________________#
