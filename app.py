@@ -113,7 +113,7 @@ if categoria == "Storytelling: Canon vs Mercado":
         - Innovación lingüística  
         - Reconocimiento académico  
         
-        **Pero... ¿y si es falso? ¿de verdad hay que elegir un solo camnino?**  
+        **Pero... ¿y si es falso? ¿de verdad hay que elegir un solo camino?**  
              
         Primeramente, debemos entender que es un bestseller (en inglés, literalmente "mejor vendido") es un término usado en la industria editorial para referirse a Títulos que han vendido una gran cantidad de ejemplares en poco tiempo. Si desea conocer más acerca de los bestsellers puedes visitar nuestro video en youtube(el link se encuentra en el menú) 
         
