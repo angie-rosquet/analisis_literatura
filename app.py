@@ -8,7 +8,7 @@ import plotly.express as px
 from PIL import Image
 import numpy as np
 #propia
-import bibliotecas.own_library_st as olst
+import own_library_st as olst
 
 #_______________________________________________DataFrames necesarios y variables_______________________________________________________________________________________________________________________________________________________#
 # dataframe premios unidos cervantes y nobel
@@ -165,7 +165,9 @@ if categoria == "Storytelling: Canon vs Mercado":
     
     #grafico para ver el # de bestsellers por autor
     
-    olst.num_bs_per_autor(df_bestsellers)
+    show = olst.num_bs_per_autor(df_bestsellers)
+    
+    show
     
     # promedio de cantidad de best sellers 
     bestsellers_por_autor = df_bestsellers['autor'].value_counts().reset_index()
