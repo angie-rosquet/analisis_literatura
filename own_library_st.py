@@ -634,3 +634,73 @@ def contar_bestsellers_por_año(df_autor):
     conteo = df_autor.groupby('año').size().reset_index(name='Conteo')
     return conteo.sort_values('año')
 
+def visualizar_autor(df_bestsellers):
+    st.header("Análisis por Autor")
+    
+    # Obtener lista única de autores
+    autores_disponibles = sorted(df_bestsellers['autor'].unique())
+    
+    # Widget de selección con search
+    autor_seleccionado = st.selectbox(
+        "Selecciona un autor:",
+        options=autores_disponibles,
+        index=0
+    )
+    
+    # Filtrar datos del autor seleccionado
+    df_autor = df_bestsellers[df_bestsellers['autor'].str.lower() == autor_seleccionado.lower()]
+    
+    if not df_autor.empty:
+        # Mostrar información básica
+        st.subheader(f"Análisis para: {autor_seleccionado}")
+        
+        # 1. Gráfico de libros con más apariciones
+        libros_autor = df_autor.groupby('titulo').size().reset_index(name='apariciones').sort_values('apariciones', ascending=False)
+        
+        fig_libros = px.bar(
+            libros_autor.head(10),
+            x='apariciones',
+            y='titulo',
+            orientation='h',
+            title=f'Top libros de {autor_seleccionado} en listas de bestsellers',
+            labels={'titulo': 'Libro', 'apariciones': 'Veces en listas'},
+            color='apariciones',
+            color_continuous_scale='Viridis'
+        )
+        
+        st.plotly_chart(fig_libros, use_container_width=True)
+        
+        # 2. Gráfico de pastel de distribución de géneros
+        if 'Género' in df_autor.columns:
+            generos_autor = df_autor['Género'].value_counts().reset_index()
+            generos_autor.columns = ['Género', 'Cantidad']
+            
+            fig_generos = px.pie(
+                generos_autor,
+                values='Cantidad',
+                names='Género',
+                title=f'Distribución de géneros de {autor_seleccionado}',
+                hole=0.3
+            )
+            
+            st.plotly_chart(fig_generos, use_container_width=True)
+        else:
+            st.warning("No hay información de géneros disponible para este autor")
+            
+        # 3. Evolución temporal (si hay datos de año)
+        if 'año' in df_autor.columns:
+            evolucion = df_autor['año'].value_counts().reset_index().sort_values('año')
+            evolucion.columns = ['Año', 'Bestsellers']
+            
+            fig_evolucion = px.line(
+                evolucion,
+                x='Año',
+                y='Bestsellers',
+                title=f'Evolución de bestsellers de {autor_seleccionado} por año',
+                markers=True
+            )
+            
+            st.plotly_chart(fig_evolucion, use_container_width=True)
+    else:
+        st.warning("No se encontraron datos para el autor seleccionado")
+

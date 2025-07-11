@@ -331,8 +331,8 @@ elif categoria == "Data Product":
 
     st.subheader("Géneros literarios más populares en The New York Times:")
     olst.nyt_genders()
-
-
+    
+    olst.visualizar_autor(df_bestsellers)
 
 
 #______________________________________________________________Data Frames_____________________________________________________________________________________________________________________________________________________________#    
