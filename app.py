@@ -59,7 +59,7 @@ with st.sidebar:
     st.title("📚 Menú")
     categoria = st.radio(
         "Aquí se encuentran las opciones para navegar en nuestro sitio:",
-        options=["Página Principal de Presentación", "Storytelling: Canon vs Mercado", "Data Product","Data Frame Bestsellers New York Times", "Data Frame Bestsellers Amazon", "Data Frame Bestsellers Casa del Título(2018-2024)", "Data Frame Premios Nobel", "Data Frame Premios Cervantes", "Acerca de"],
+        options=["Página Principal de Presentación", "Storytelling: Canon vs Mercado","Buscador de libros", "Data Product","Data Frame Bestsellers New York Times", "Data Frame Bestsellers Amazon", "Data Frame Bestsellers Casa del Título(2018-2024)", "Data Frame Premios Nobel", "Data Frame Premios Cervantes", "Acerca de"],
         index=0
     )
     
@@ -248,10 +248,10 @@ Las plataformas digitales están redefiniendo los criterios de consagración lit
 La conclusión invita a superar falsas dicotomías. Más que elegir entre opciones excluyentes, el lector contemporáneo debería buscar esas obras fronterizas que, como 2666 de Roberto Bolaño -bestseller póstumo y simultáneamente canonizado-, demuestran que la gran literatura puede ser a la vez profunda y popular. 
 El verdadero desafío está en derribar estas barreras artificiales y celebrar aquellas obras que, al estilo de Cien años de soledad, surgen del genio creativo pero hablan el lenguaje universal capaz de conectar con grandes audiencias. El futuro pertenece a los escritores que no teman los estantes izquierdos ni los derechos de la librería, sino que se atrevan a transitar entre ambos con obras que desafíen categorías.
              """)
-#____________________________________________________Data Product________________________________________________________________________________________________________________________________________________________________________________________#       
+#____________________________________________________Buscador________________________________________________________________________________________________________________________________________________________________________________________#       
 
 
-elif categoria == "Data Product":
+elif categoria == "Buscador de libros":
     st.title("Data Product")        
     # Función para obtener el catálogo
     route = "books_"
@@ -311,6 +311,50 @@ elif categoria == "Data Product":
         st.warning("No se encontraron libros con esos criterios.")
         
     
+    
+#______________________________________________________________Data Product_____________________________________________________________________________________________________________________________
+elif categoria == "Data Product":
+    st.title("Sección de gráficos interactivos")
+    st.subheader("¡Entiende los datos tú mismo!")
+
+    st.subheader("Cantidad de publicaciones de autores bestsellers en Amazon:")
+    olst.amazon_authors_counting()
+
+    st.subheader("Gráfico de autores premiados que tienen bestsellers:")
+    olst.graficar_n_autores_con_bestsellers(df_relacion_premio_bestseller_all)
+
+    st.subheader("Cantidad de Nobels de Literatura por nacionalidad (en orden decreciente):")
+    olst.nat_counting()
+
+    st.subheader("Nacionalidades más premiadas con el Cervantes en los últimos 30 años:")
+    olst.cervantes_counting()
+
+    st.subheader("Géneros literarios más populares en The New York Times:")
+    olst.nyt_genders()
+
+
+
+
+#______________________________________________________________Data Frames_____________________________________________________________________________________________________________________________________________________________#    
+elif categoria == "Data Frame Bestsellers New York Times":
+    st.title("Recopilación de los Bestsellers en el New York Time de 1994 a 2024")
+    olst.df_nyt
+
+elif categoria == "Data Frame Bestsellers Amazon":
+    st.title("Recopilación de los Bestsellers en Amazon 1995 a 2024")
+    olst.df_amazon
+    
+elif categoria == "Data Frame Bestsellers Casa del Libro (2018-2024)":
+    st.title("Recopilación de los Bestsellers en Casa del Título de 1994 a 2024")
+    olst.df_casalibro
+    
+elif categoria == "Data Frame Premios Nobel":
+    st.title("Recopilación de los Premios Nobel de 1994 a 2024")
+    olst.df_nobel
+    
+elif categoria == "Data Frame Premios Cervantes":
+    st.title("Recopilación de los Premios Cervantes de 1994 a 2024")
+    olst.df_cervantes
     
     
     

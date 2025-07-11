@@ -463,3 +463,174 @@ def mapa_calor_nobel(df_nobel):
     fig.update_layout(margin={"r":0,"t":40,"l":0,"b":0})
     
     st.plotly_chart(fig)
+    
+    
+#______________________________________________________Para Data Product_________________________________________________________________________________________________________________________________________________--#
+    
+#______________________________________________________Graficar conteo de autores en Amazon_______________________________________________
+def amazon_authors_counting(amazon_df = df_amazon):
+    
+    author_count = {}
+    for author in amazon_df["autor"]:
+        if author not in author_count:
+            counter = 0
+            for name in amazon_df["autor"]:
+                if name == author:
+                    counter += 1
+            author_count[author] = counter
+
+    authors_count_df = pd.DataFrame(author_count.keys(),columns = ["Autores"])
+    authors_count_df["Apariciones"] = author_count.values()
+    authors_count_df = authors_count_df.sort_values(by = "Apariciones",ascending = False)
+    authors_count_df = authors_count_df[authors_count_df['Autores'] != "j. k. rowling"]
+
+    selection = st.slider(label = "Selecciona cuántos autores con más libros en Amazon quieres ver:",min_value = 1,max_value = 20,value = 5)
+
+    fig = px.bar(data_frame = authors_count_df.head(selection),
+                 x = authors_count_df['Apariciones'].head(selection),
+                 y = authors_count_df["Autores"].head(selection),
+                 orientation = "h",
+                 title = "Libros en Amazon por n primeros autores",
+                 hover_data = ["Autores","Apariciones"])
+    
+    st.plotly_chart(fig,use_container_width = True)
+    
+#_____________________________________________Graficar intersección de los n primeros autores premiados con sus bestsellers___________________________________________________________
+
+def graficar_n_autores_con_bestsellers(df_relacion):
+        
+    df = df_relacion.copy()
+    df['año'] = df['año'].astype(int)  
+    df['count'] = df['count'].fillna(0).astype(int)
+
+    df['barra'] = df['count'].apply(lambda x: x if x > 0 else 0.0001)
+
+    autores_ordenados = df.drop_duplicates('autor', keep='first')['autor'].tolist()
+
+    df['autor'] = pd.Categorical(df['autor'], categories=autores_ordenados, ordered=True)
+    df = df.sort_values(by = "count",ascending = False)
+    df.loc[df["autor"] == "mario vargas llosa","count"] = 8
+    selection = st.slider(label = "Elige la cantidad de autores a revisar:",min_value = 1,max_value = 30,value = 8)
+    
+    fig = px.bar(
+        df.head(selection),
+        x='barra',
+        y='autor',
+        orientation='h',
+        color='count',
+        color_continuous_scale='Viridis',
+        hover_data={'año': True, 'nationality': True, 'language': True, 'count': True, 'barra': False},
+        labels={
+            'barra': 'Número de Bestsellers',
+            'autor': 'Autor',
+            'año': 'Año del Premio',
+            'count': 'Bestsellers'
+            },
+        height=700,
+        )
+    fig.update_traces(
+        hovertemplate="<b>%{y}</b><br>" +
+        "Bestsellers: %{customdata[3]}<br>" +
+        "Premio: %{customdata[0]}<br>" +
+        "Nacionalidad: %{customdata[1]}<br>" +
+        "Idioma: %{customdata[2]}<extra></extra>"
+        )
+    fig.update_layout(
+        coloraxis_colorbar=dict(title="Nº Bestsellers"),
+        yaxis_title="Autor (ordenado por cantidad de bestsellers)",
+        xaxis_title="Número de Bestsellers"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+#__________________________________________________Conteo de Nobels para N nacionalidades en orden_______________________________________________________
+
+def nat_counting(df = df_nobel):
+
+    nationalities_count = {"Nacionalidad":[],"Conteo":[]}
+    
+    for i in df["nationality"]:
+        for nation in i.split("/"):
+            if nation in nationalities_count["Nacionalidad"]:
+                nationalities_count["Conteo"][nationalities_count["Nacionalidad"].index(nation)] += 1
+            else:
+                nationalities_count["Nacionalidad"].append(nation)
+                nationalities_count["Conteo"].append(1)
+
+    traduced = pd.DataFrame({"Nacionalidad":["Reino Unido","Francia","China","Polonia","Alemania","Estados Unidos","Austria","Japón","Portugal","Italia","Irlanda","Hungría","Trinidad y Tobago","Turquía","Mauricio"]})
+    traduced.index = [i for i in range(15)]
+    nationalities_count = pd.DataFrame(nationalities_count).sort_values(by = "Conteo",ascending = False)
+    nationalities_count.index = [i for i in range(29)]
+    new_nat_count = pd.concat([nationalities_count['Conteo'],traduced],axis = 1)
+    selection = st.slider("Escoge un número de nacionalidades a visualizar",min_value = 1,max_value = 15,value = 5)
+
+    fig = px.bar(data_frame = new_nat_count.head(selection),
+                  x = "Nacionalidad",
+                  y = "Conteo",
+                  color = "Conteo",
+                  hover_data = {"Conteo":True,"Nacionalidad":False})
+    
+    st.plotly_chart(fig,use_container_width = True)
+
+#_______________________________________________Generos literarios más populares en The New York Times_________________________________________________________
+
+def nyt_genders(df = df_nyt):
+    
+    genders_count = {"Estilo":[],"Conteo":[]}
+    for gender in df["Género"]:
+        if gender in genders_count["Estilo"]:
+            genders_count["Conteo"][genders_count["Estilo"].index(gender)] += 1
+        else:
+            genders_count["Estilo"].append(gender)
+            genders_count["Conteo"].append(1)
+    
+    count_df = pd.DataFrame(genders_count)
+    count_df = count_df[count_df["Estilo"] != "nonfiction"].sort_values(by = "Conteo",ascending = False).head(5)
+    count_df.index = [x for x in range(5)]
+    traduced = pd.DataFrame({"Sector":["Ficción","Biografía","Historia","Memorias","Historias cortas"]})
+    new_df = pd.concat([traduced,count_df["Conteo"]],axis = 1)
+
+    fig = px.bar(data_frame = new_df,
+                 x = new_df["Sector"],
+                 y = new_df["Conteo"],
+                 hover_data = {"Sector":False,"Conteo":True},
+                 color_continuous_scale = "Viridis")
+    
+    st.plotly_chart(fig,use_container_width = True)
+
+#__________________________________________________Conteo de los premios Cervantes por nacionalidad______________________________________________________
+
+def cervantes_counting(df = df_cervantes):
+
+    nat_count = {"País":[],"Conteo":[]}
+    for nacionalidad in df["nationality"]:
+        if nacionalidad in nat_count["País"]:
+            nat_count["Conteo"][nat_count["País"].index(nacionalidad)] += 1
+        else:
+            nat_count["País"].append(nacionalidad)
+            nat_count["Conteo"].append(1)
+
+    nat_count
+    data = pd.DataFrame(nat_count).sort_values(by = "Conteo",ascending = False).head(5)
+    data = data[data['País'] != "Perú"]
+    data = pd.concat([data,pd.DataFrame({"País":["Otros"],"Conteo":[4]})],axis = 0)
+    data.index = [x for x in range(5)]
+
+    fig = px.pie(data,
+                 values = data["Conteo"],
+                 names = data['País'],
+                 hover_data = ["Conteo"])
+
+    st.plotly_chart(fig,use_container_width = True)
+
+#______________________________________________FUNCION PARA FILTRAR POR AUTOR_____________________________________________________________________#
+
+def filtrar_por_autor(df, nombre_autor):
+    return df[df['autor'].str.contains(nombre_autor, case=False, na=False)]
+
+def contar_bestsellers_por_año(df_autor):
+    if 'año' not in df_autor.columns:
+        raise ValueError("El DataFrame debe contener una columna 'Año'")
+    conteo = df_autor.groupby('año').size().reset_index(name='Conteo')
+    return conteo.sort_values('año')
+
