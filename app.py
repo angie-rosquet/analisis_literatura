@@ -66,7 +66,7 @@ with st.sidebar:
 # Agregos al sidebar
 st.sidebar.markdown("Síguenos en Instagram: ")
 st.sidebar.link_button("@narrativa_en_datos", "https://www.instagram.com/narrativa_en_datos/")
-st.sidebar.link_button("nuestro canal en Youtube siguelo para estar atento al video", "https://www.youtube.com/@arraset_ds")
+st.sidebar.link_button("nuestro video en Youtube", "https://youtu.be/Beqyl6PsA8E?si=LQn8Tf9SRIxY2u7d")
     
 #_____________________________________________________Presentacion______________________________________________________________________________________________________________________________________#
 if categoria == "Página Principal de Presentación":
