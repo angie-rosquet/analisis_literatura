@@ -8,11 +8,11 @@ import os
 import pycountry
 
 #rutas de los datos
-amazon_path = "data\damazonoficial1995-2024.json"
-casa_del_libro_path = "data\dcasa_del_libro_manual.json"
-nobel_path = "data\dnobel_literature_1994_2024.json"
-nyt_path = "data\dnotable_books_nyt.json"
-premios_cervantes_path = "data\dpremios_cervantes.json"
+amazon_path = os.path.join("data","damazonoficial1995-2024.json")
+casa_del_libro_path = os.path.join("data","dcasa_del_libro_manual.json")
+nobel_path = os.path.join("data","dnobel_literature_1994_2024.json")
+nyt_path = os.path.join("data","dnotable_books_nyt.json")
+premios_cervantes_path = os.path.join("data","dpremios_cervantes.json")
 
 
 #_______________________________________funcion para cargar los json_________________________________________________________________________#
